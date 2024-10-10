@@ -1,13 +1,16 @@
-import React from 'react'
-import Home from './src/screen/Home'
+import React from 'react';
+import Home from './src/screen/Home';
+import {LogBox} from 'react-native';
+
+LogBox.ignoreAllLogs();
 
 const App = () => {
   const Root = Home;
   return (
     <>
-    <Root/>
+      <Root />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

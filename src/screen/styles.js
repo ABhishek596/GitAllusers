@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     repoItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 15,
+      padding: 12,
       backgroundColor: '#fff',
       marginBottom: height * 0.02,
       borderRadius: 10,
@@ -39,9 +39,10 @@ export const styles = StyleSheet.create({
     },
     repoDetails: {
       marginLeft: width * 0.04,
+      gap:7
     },
     repoName: {
-      fontSize: width * 0.045,
+      fontSize: width * 0.05,
       fontWeight: 'bold',
     },
     repoCount: {
@@ -49,8 +50,8 @@ export const styles = StyleSheet.create({
       color: '#888',
     },
     image:{
-      width: width * 0.12,
-      height: width * 0.12,
+      width: width * 0.18,
+      height: width * 0.18,
       borderRadius:180/2
     },
     notdata:{

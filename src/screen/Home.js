@@ -7,6 +7,7 @@ import {styles} from './styles';
 import LoadingIndicator from '../component/loading/LoadingIndicator';
 import Header from '../component/header/Header';
 
+      
 
 const Home = () => {
   const [searchText, setSearchText] = useState('');
@@ -17,36 +18,60 @@ const Home = () => {
 
   const fetchData = useCallback(
     debounce(async query => {
-      if (!query) return;
+      if (!query) {
+        setRepos([]);
+        setError(null);
+        return;
+      }
       setLoading(true);
       setError(null);
       try {
         const userResponse = await axios.get(
-          `https://api.github.com/users/${query}`,
+          `${BASEURL}${query}`,
+          {
+            headers: {
+              Authorization: `token ${GITHUB_TOKEN}`,
+            },
+          },
         );
+
         if (userResponse.data) {
           const repoResponse = await axios.get(
-            `https://api.github.com/users/${userResponse.data.login}/repos`,
+            `${BASEURL}${userResponse.data.login}/repos`,
+            {
+              headers: {
+                Authorization: `token ${GITHUB_TOKEN}`,
+              },
+            },
           );
           setRepos([repoResponse.data[0]]);
           setReposlength(repoResponse.data?.length);
           // console.log('repoResponse fetching data:', repoResponse.data);
         }
       } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setError('User not found');
+        if (error.response) {
+          if (error.response.status === 404) {
+            setError('User not found');
+          } else if (error.response.status === 403) {
+            setError('API rate limit exceeded. Please try again later.');
+          } else {
+            setError('An unexpected error occurred');
+          }
         } else {
-          setError('User not found..');
+          setError('Network error');
         }
       } finally {
         setLoading(false);
       }
-    }, 300),
+    }, 500),
     [],
   );
 
   useEffect(() => {
     fetchData(searchText);
+    return () => {
+      fetchData.cancel();
+    };
   }, [searchText, fetchData]);
 
   const renderRepoItem = ({item}) => (
@@ -59,7 +84,7 @@ const Home = () => {
       />
       <View style={styles.repoDetails}>
         <Text style={styles.repoName}>{item?.owner?.login}</Text>
-        <Text style={styles.repoCount}>{reposlength} repositories</Text>
+        <Text style={styles.repoCount}>{reposlength}  repositories</Text>
       </View>
     </View>
   );
